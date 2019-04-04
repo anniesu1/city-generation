@@ -184,7 +184,58 @@ class CityGrid {
     }
 
     setBuildingVBO() {
+        let col1Array: number[] = [];
+	    let col2Array: number[] = [];
+	    let col3Array: number[] = [];
+	    let col4Array: number[] = [];
+        let colorsArray: number[] = [];
+        
+        for (let i: number = 0; i < this.width; i++) {
+            for (let j: number = 0; j < this.height; j++) {
+                let cellType = this.grid[i][j];
+                if (cellType == 2) {
+                    // If the cell type is a building, create a square
+                    col1Array.push(1);
+                    col1Array.push(0);
+                    col1Array.push(0);
+                    col1Array.push(0);
 
+                    col2Array.push(0);
+                    col2Array.push(1);
+                    col2Array.push(0);
+                    col2Array.push(0);
+
+                    col3Array.push(0);
+                    col3Array.push(0);
+                    col3Array.push(1);
+                    col3Array.push(0);
+            
+                    col4Array.push(i - this.width / 2);
+                    col4Array.push(0);
+                    col4Array.push(j - this.height / 2);
+                    col4Array.push(1);
+
+                    colorsArray.push(0);
+                    colorsArray.push(0);
+                    colorsArray.push(1);
+                    colorsArray.push(1);
+                }
+            }
+        }
+        let col1: Float32Array = new Float32Array(col1Array);
+        let col2: Float32Array = new Float32Array(col2Array);
+        let col3: Float32Array = new Float32Array(col3Array);
+        let col4: Float32Array = new Float32Array(col4Array);
+        let colors: Float32Array = new Float32Array(colorsArray);
+
+        let output: any = {};
+        output.transform1Array = col1;
+        output.transform2Array = col2;
+        output.transform3Array = col3;
+        output.transform4Array = col4;
+        output.colorsArray = colors;
+
+        return output;
     }
 }
 
