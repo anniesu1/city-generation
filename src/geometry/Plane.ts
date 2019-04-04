@@ -64,26 +64,23 @@ class Plane extends Drawable {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
     let errorEnum = gl.getError();
     if (errorEnum != 0) {
-      console.log('ERROR: after bindBuffer');
+      console.log('ERROR: after plane bindBuffer');
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufNor);
     gl.bufferData(gl.ARRAY_BUFFER, this.normals, gl.STATIC_DRAW);
     errorEnum = gl.getError();
     if (errorEnum != 0) {
-      console.log('ERROR: after bindBuffer');
+      console.log('ERROR: after plane bindBuffer');
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
     errorEnum = gl.getError();
     if (errorEnum != 0) {
-      console.log('ERROR: after bindBuffer');
+      console.log('ERROR: after plane bindBuffer');
     }
-
     console.log(`Created plane`);
-
-    // Try messing w/ this function - screenquad stuff
   }
 };
 

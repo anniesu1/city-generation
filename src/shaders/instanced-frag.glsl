@@ -103,5 +103,6 @@ float pNoise(vec2 p, int res) {
 void main()
 {
     float dist = 1.0 - (length(fs_Pos.xyz) * 2.0);
-    out_Col = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+    out_Col = fs_Col;
 }

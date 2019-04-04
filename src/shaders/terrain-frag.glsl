@@ -64,10 +64,10 @@ vec3 getIslandColor() {
 void main() {
     //float t = clamp(smoothstep(40.0, 50.0, length(fs_Pos)), 0.0, 1.0); // Distance fog
 
-    //vec3 customColor;
-    //customColor = getMountainColor();
+    vec3 customColor;
+    customColor = getIslandColor();
 
     // Mix in order to create fog effect
     //out_Col = vec4(mix(customColor, vec3(164.0 / 255.0, 233.0 / 255.0, 1.0), t), 1.0);
-    out_Col = vec4(1.0, 0.0, 0.0, 1.0);
+    out_Col = vec4(customColor, 1.0);
 }
