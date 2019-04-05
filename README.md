@@ -1,7 +1,7 @@
 # City Generation by Annie Su (anniesu1)
 
 ## Demo
-[Link](https://anniesu1.github.io/city-generation/)
+[Link](https://anniesu1.github.io/city-generation/) Please zoom out upon loading the page! I was unable to move the camera back. 
 
 ## Final result
 ![](screencaptures/aerial2.png)
