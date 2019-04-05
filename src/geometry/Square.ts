@@ -66,8 +66,6 @@ class Square extends Drawable {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTransform4);
     gl.bufferData(gl.ARRAY_BUFFER, this.transform4, gl.STATIC_DRAW);
-
-    console.log('Length of transform1 array: ' + this.transform1.length);
     console.log('Set instance VBOs for square');
   }
 };

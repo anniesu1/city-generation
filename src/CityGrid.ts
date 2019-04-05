@@ -1,4 +1,4 @@
-import { vec2 } from "gl-matrix";
+import { vec2, mat4 } from "gl-matrix";
 
 function random2(p: vec2) : vec2 {
     // return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
@@ -91,14 +91,14 @@ class CityGrid {
         console.log('Rasterized grid of size: ' + this.grid.length);
     }
 
-    generateValidPoints(numPoints: number) :  Array<vec2> {
+    generateValidPoints() :  Array<vec2> {
         let outputPoints = new Array<vec2>();
 
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
                 // Check if point belongs in grid using noise function
                 let noise = Math.random();
-                if (noise > 0.7 && this.grid[i][j] != 1) {
+                if (noise > 0.8 && this.grid[i][j] != 1 && this.neighborsAreNotRoads(i, j)) {
                     // If noise is above a threshold and there is not already a road, set
                     // down a building
                     this.grid[i][j] = 2;
@@ -106,6 +106,22 @@ class CityGrid {
             }
         }
         return outputPoints;
+    }
+
+    neighborsAreNotRoads(x: number, y: number) : boolean {
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                let newX = x + i;
+                let newY = y + j;
+                if (newX >= 0 && newY >= 0 && newX < this.width && newY < this.height) {
+                    if (this.grid[newX][newY] == 1) {
+                        // If this is a road, return false
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     setGridVBO() : any {
@@ -119,25 +135,32 @@ class CityGrid {
             for (let j: number = 0; j < this.height; j++) {
                 let cellType = this.grid[i][j];
                 if (cellType != 0) {
-                    col1Array.push(1);
-                    col1Array.push(0);
-                    col1Array.push(0);
-                    col1Array.push(0);
+                    // Rotate the squares by 90 degrees so they lie flat on the plane
+                    let rotation90: mat4 = mat4.create();
+                    let translatedMat: mat4 = mat4.create();
+                    translatedMat[12] = i - this.width / 2;
+                    translatedMat[14] = j - this.width / 2;
+                    mat4.rotateX(rotation90, translatedMat, 90.0 * Math.PI / 180.0);
 
-                    col2Array.push(0);
-                    col2Array.push(1);
-                    col2Array.push(0);
-                    col2Array.push(0);
+                    col1Array.push(rotation90[0]);
+                    col1Array.push(rotation90[1]);
+                    col1Array.push(rotation90[2]);
+                    col1Array.push(rotation90[3]);
 
-                    col3Array.push(0);
-                    col3Array.push(0);
-                    col3Array.push(1);
-                    col3Array.push(0);
+                    col2Array.push(rotation90[4]);
+                    col2Array.push(rotation90[5]);
+                    col2Array.push(rotation90[6]);
+                    col2Array.push(rotation90[7]);
+
+                    col3Array.push(rotation90[8]);
+                    col3Array.push(rotation90[9]);
+                    col3Array.push(rotation90[10]);
+                    col3Array.push(rotation90[11]);
             
-                    col4Array.push(i - this.width / 2);
-                    col4Array.push(0);
-                    col4Array.push(j - this.height / 2);
-                    col4Array.push(1);
+                    col4Array.push(rotation90[12]);
+                    col4Array.push(rotation90[13]);
+                    col4Array.push(rotation90[14]);
+                    col4Array.push(rotation90[15]);
 
                     if (cellType == 1) {
                         // Road - red
@@ -201,7 +224,7 @@ class CityGrid {
                     col1Array.push(0);
 
                     col2Array.push(0);
-                    col2Array.push(1);
+                    col2Array.push(15);
                     col2Array.push(0);
                     col2Array.push(0);
 

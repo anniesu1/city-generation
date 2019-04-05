@@ -3,6 +3,7 @@ import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 import Square from './geometry/Square';
 import ScreenQuad from './geometry/ScreenQuad';
+import Cube from './geometry/Cube';
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
@@ -26,6 +27,7 @@ let square: Square;
 let screenQuad: ScreenQuad;
 let lSystem: LSystem;
 let plane: Plane;
+let cube: Cube; // TODO
 
 // Road generation
 let highwayT: mat4[] = [];
@@ -48,6 +50,8 @@ let time: number = 0.0;
 function loadScene() {
   square = new Square();
   square.create();
+  cube = new Cube(vec3.fromValues(0, 0, 0));
+  cube.create();
 
   // Create terrain map
   screenQuad = new ScreenQuad();
@@ -112,8 +116,9 @@ function setTransformArrays(transforms: mat4[], col: vec4) {
 function setUpGrid() {
   grid = new CityGrid(gridWidth, gridHeight);
   grid.rasterize();
-  grid.generateValidPoints(1000); // TODO: let player modify number of buildings
+  grid.generateValidPoints(); // TODO: let player modify number of buildings
   let gridVBOData: any = grid.setGridVBO();
+  let buildingVBOData: any = grid.setBuildingVBO();
 
   // let transform1Array: number[] = [];
   // let transform2Array: number[] = [];
@@ -152,16 +157,25 @@ function setUpGrid() {
   //   }
   // }
 
-  let colors: Float32Array = gridVBOData.colorsArray;
-  let transform1: Float32Array = gridVBOData.transform1Array;
-  let transform2: Float32Array = gridVBOData.transform2Array;
-  let transform3: Float32Array = gridVBOData.transform3Array;
-  let transform4: Float32Array = gridVBOData.transform4Array;
+  let colorsSquare: Float32Array = gridVBOData.colorsArray;
+  let transform1Square: Float32Array = gridVBOData.transform1Array;
+  let transform2Square: Float32Array = gridVBOData.transform2Array;
+  let transform3Square: Float32Array = gridVBOData.transform3Array;
+  let transform4Square: Float32Array = gridVBOData.transform4Array;
 
-  square.setInstanceVBOs(colors, transform1, transform2, transform3, transform4);
-  square.setNumInstances(transform1.length / 4.0);
-
+  square.setInstanceVBOs(colorsSquare, transform1Square, transform2Square, 
+    transform3Square, transform4Square);
+  square.setNumInstances(transform1Square.length / 4.0);
   console.log('Set up rasterization VBOs');
+
+  let colorsCube: Float32Array = buildingVBOData.colorsArray;
+  let transform1Cube: Float32Array = buildingVBOData.transform1Array;
+  let transform2Cube: Float32Array = buildingVBOData.transform2Array;
+  let transform3Cube: Float32Array = buildingVBOData.transform3Array;
+  let transform4Cube: Float32Array = buildingVBOData.transform4Array;
+  console.log('transform1cube.length = ' + transform1Cube.length);
+  cube.setInstanceVBOs(colorsCube, transform1Cube, transform2Cube, transform3Cube, transform4Cube);
+  cube.setNumInstances(transform1Cube.length / 4.0);
 }
 
 function main() {
@@ -210,9 +224,7 @@ function main() {
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
-  //gl.enable(gl.BLEND);
   gl.enable(gl.DEPTH_TEST);
-  //gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
 
   const instancedShader = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/instanced-vert.glsl')),
@@ -315,6 +327,7 @@ function main() {
 
     renderer.render(camera, instancedShader, [
       square,
+      cube,
     ]);
 
     stats.end();
