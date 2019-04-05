@@ -15,11 +15,6 @@ import CityGrid from './city/CityGrid';
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-  'Show pop. density': false,
-  'Show terrain elevation': true,
-  'Show land vs. water': false,
-  'Iterations': 100,
-  'Rotation angle': 120
 };
 
 // Geometry
@@ -189,21 +184,6 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  gui.add(controls, 'Show pop. density');
-  gui.add(controls, 'Show terrain elevation').listen().onChange(
-    function(){
-      controls["Show land vs. water"] = false;
-      controls["Show terrain elevation"] = !showTerrainElevation;
-      showTerrainElevation = !showTerrainElevation;
-    });
-  gui.add(controls, 'Show land vs. water').listen().onChange(
-    function() {
-      controls["Show terrain elevation"] = false;
-      controls["Show land vs. water"] = !showTerrainBinary;
-      showTerrainBinary = !showTerrainBinary;
-    });
-  gui.add(controls, 'Iterations', 10, 200);
-  gui.add(controls, 'Rotation angle', 0, 360);
 
 
   // get canvas and webgl context
@@ -284,20 +264,6 @@ function main() {
     buildingShader.setEyeRefUp(camera.position, camera.target, camera.up);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
-
-    // Pass user input the LSystem
-    if (prevIter != controls.Iterations || prevRotation != controls["Rotation angle"]) {
-      prevIter = controls.Iterations;
-      prevRotation = controls["Rotation angle"];
-
-      // Clear transformation matrices and make a new L-System
-      highwayT = [];
-      roadT = [];
-      lSystem = new LSystem("F", controls.Iterations, controls["Rotation angle"], highwayT, 
-                            roadT, width, height, textureData);
-      lSystem.expandHighway(controls.Iterations); 
-      setTransformArrays(highwayT, vec4.fromValues(0.0, 0.0, 0.0, 1.0));      
-    }
 
     // Render 
     renderer.render(camera, flatShader, [screenQuad]); // Sky

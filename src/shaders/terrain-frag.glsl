@@ -62,7 +62,7 @@ vec3 getCityColor() {
 }
 
 void main() {
-    //float t = clamp(smoothstep(40.0, 50.0, length(fs_Pos)), 0.0, 1.0); // Distance fog
+    float t = clamp(smoothstep(40.0, 50.0, length(fs_Pos)), 0.0, 1.0); // Distance fog
 
     vec3 customColor;
     customColor = getCityColor();

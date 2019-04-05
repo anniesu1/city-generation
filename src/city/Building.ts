@@ -71,7 +71,6 @@ class Building {
             newT[10] *= zScale;
 
             let newLength: number = this.transforms.push(newT);
-            //console.log('newT: ' + newT);
         }
         return height;
     }

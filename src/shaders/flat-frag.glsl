@@ -169,15 +169,11 @@ vec3 getMountainColor() {
 void main() {
     // Stars
     float time = 0.8 * u_Time;
-	
 	  vec2 position = fs_Pos * 0.5 * u_Dimensions;
-
 	  float color = pow(noise(position), 40.0) * 20.0;
-
 	  float r1 = noise(position*noise(vec2(sin(time*0.01))));
 	  float r2 = noise(position*noise(vec2(cos(time*0.01), sin(time*0.01))));
 	  float r3 = noise(position*noise(vec2(sin(time*0.05), cos(time*0.05))));
-		
 	  vec4 starColor = vec4(vec3(color*r1, color*r2, color*r3), 1.0);
 
     // Sky
@@ -188,6 +184,6 @@ void main() {
     vec2 vigPos = vec2(fs_Pos[0], fs_Pos[1]);
     float distance = sqrt((vigPos[0]) * (vigPos[0]) + (vigPos[1]) * (vigPos[1]));
     // Multiply the color by (1 - distance) -- leverage distance of fragment from screen center
-    out_Col = (1.0 - distance * 0.4) * (vec4(getMountainColor(), 1.0) + vec4(pinkClouds * 0.3, 0.4) + (starColor * 0.9));
+    out_Col = (1.0 - distance * 0.4) * (vec4(getMountainColor(), 1.0) + vec4(pinkClouds * 0.3, 0.3) + (starColor * 0.9));
 		return;
 }

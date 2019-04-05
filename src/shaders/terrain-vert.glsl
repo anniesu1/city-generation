@@ -119,23 +119,14 @@ void main() {
                     1.0 / 2.0, 20);
 
   float height;
-    // Cloudy mountains
     height = pow(pert * 6.0, 1.7) - 10.0;
-
-    // More realistic mountains / dusky mountains
-    //height = pow(perlin * 4.0, 1.3) * 6.0;
-
-    // Mesas
-    float fbmNoise = fbm(vec2((vs_Pos.x / 2.0 + u_PlanePos[0]), (vs_Pos.z / 2.0 + u_PlanePos[1])), 0.6, 6);
-    //height = pow(fbmNoise, 7.70) * 6.0;
-
+    float fbmNoise = fbm(vec2((vs_Pos.x / 2.0 + u_PlanePos[0]), 
+      (vs_Pos.z / 2.0 + u_PlanePos[1])), 0.6, 6);
 
     height = clamp(height, -20.0, -0.99);
   
   fs_Height = height;
   modelposition[1] = height;
-
-
   modelposition = u_Model * modelposition;
   gl_Position = u_ViewProj * modelposition;
 }
