@@ -2,62 +2,14 @@ import { vec2, mat4, vec3 } from "gl-matrix";
 import Building from "./Building";
 import TextureHelper from '../lsystem/TextureHelper';
 
-function random2(p: vec2) : vec2 {
-    // return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
-    //                       dot(p, vec2(269.5, 183.3))))
-    //                       * 43758.5453);
-    // TODO
-    return vec2.fromValues(0.0, 0.0);
-}
-
-// function worley(p: vec2) {
-//     // Divide image into mxn cells
-//     let m: number = 65.0;
-//     let n: number = 50.0;
-
-//     // Determine which cell our current pixel is in
-//     let UVCell: vec2 = vec2.fromValues(p[0] / this.width * m, p[1] / this.height * n);
-//     let floorUVCell: vec2 = vec2.fromValues(Math.floor(UVCell[0]), Math.floor(UVCell[1]));
-
-//     // Test each pixel against the point belonging to the cell in which
-//     // the pixel lies and its eight surrounding cells
-//     let minDistance = 500.0;
-//     let minPoint: vec2 = vec2.fromValues(0.0, 0.0);
-
-//     for (let i = -1; i <= 1; i++) {
-//         for (let j = 1; j >= -1; j--) {
-//             let neighbor: vec2 = new vec2(0.0);
-//             vec2.add(neighbor, floorUVCell, vec2.fromValues(i, j));
-//             let randomPoint: vec2 = new vec2(0.0); 
-//             vec2.add(randomPoint, neighbor, random2(neighbor));
-
-//             // If the pixel distance is smaller than minDistance, make that the pixel color
-//             let distance: number = vec2.distance(UVCell, randomPoint);
-//             if (distance < minDistance) {
-//                 // Update minDistance and point
-//                 minDistance = distance;
-
-//                 // Extract color at our random point
-//                 let currUV = vec2.fromValues(randomPoint[0] / m, randomPoint[1] / n);
-//                 minPoint = currUV;
-
-//                 let pixelColor: vec4 = texture(u_RenderedTexture, currUV);
-
-//                 // Set color of pixel to that of our random point
-//                 color = vec3(pixelColor[0], pixelColor[1], pixelColor[2]);
-//             }
-//         }
-//     }
-// }
-
 // Create high-resolution 2D grid that spans your entire scene
 class CityGrid {
     width: number;
     height: number;
     grid: number[][] = [];
     tallBuildingColor: vec3 = vec3.fromValues(69.0 / 255.0, 88.0 / 255.0, 121.0 / 255.0);
-    mediumBuildingColor: vec3 = vec3.fromValues(153.0 / 255.0, 143.0 / 255.0, 139.0 / 255.0);
-    shortBuildingColor: vec3 = vec3.fromValues(223.0 / 255.0, 196.0 / 255.0, 182.0 / 255.0);
+    mediumBuildingColor: vec3 = vec3.fromValues(213.0 / 255.0, 222.0 / 255.0, 224.0 / 255.0);
+    shortBuildingColor: vec3 = vec3.fromValues(219.0 / 255.0, 184.0 / 255.0, 190.0 / 255.0);
 
     constructor(width: number, height: number) {
         this.width = width;

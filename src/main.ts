@@ -281,6 +281,7 @@ function main() {
     flat.setTime(time++);
     terrain3DShader.setTime(time++);
     buildingShader.setTime(time++);
+    buildingShader.setEyeRefUp(camera.position, camera.target, camera.up);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
 

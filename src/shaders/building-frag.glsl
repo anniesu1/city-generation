@@ -2,6 +2,7 @@
 precision highp float;
 
 uniform float u_Time;
+uniform vec3 u_Eye, u_Ref, u_Up;
 
 in vec4 fs_Col;
 in vec4 fs_Pos;
@@ -122,7 +123,13 @@ vec3 tallBuildingWindows(vec2 uv, float flag) {
     }
 }
 
-vec3 shortBuildingWindows(vec2 pos) {
+vec3 shortBuildingWindows(vec2 pos, float lightIntensity) {
+    vec3 a = vec3(0.5, 0.5, 0.5);
+    vec3 b = vec3(0.5, 0.5, 0.5);
+    vec3 c = vec3(1.0, 1.0, 1.0);
+    vec3 d = vec3(0.30, 0.20, 0.20);
+    vec3 palette = a + b * cos(2.0 * 3.141592653589 * (c * lightIntensity + d));
+
     float width = 15.85;
     float height = 15.2;
     float winWidth = 3.55;
@@ -137,22 +144,8 @@ vec3 shortBuildingWindows(vec2 pos) {
         return vec3(1.0, 1.0, 1.0);
     }
     else {
-        return vec3(0.88, 0.77, 0.66);
+        return vec3(fs_Col);
     }
-
-    // float width = 0.5;
-    // float height = fs_BuildingHeight;
-    // float winWidth = 0.80;
-    // float winHeight = 0.90;
-    // float x = pos.x - width * floor(pos.x / width);
-    // float y = pos.y - height * floor(pos.y / height);
-
-    // if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5) {
-    //     return vec3(fs_Col);
-    // } else {
-    //     return vec3(fs_Col);
-    //     //return vec3(0.38, 0.40, 0.47);
-    // }
 }
 
 /*
@@ -182,12 +175,19 @@ void main()
     } else if (fs_BuildingHeight > 6.0) {
         col = tallBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), timeVar);
     } else {
-        col = shortBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0));
+        col = shortBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), lightIntensity);
     }
-    col = clamp(vec3(col * lightIntensity) + ambientTerm, 0.0, 1.0);
 
-    // Compute windows
-    //ivec2 size = ivec2(floor(fs_Pos.x * 10.0), floor(fs_Pos.y * 10.0));
+    // Specular
+    float exp = 2000.0;
+    vec4 cameraPos = vec4(u_Eye, 1.0);
+    vec4 H = normalize((cameraPos + fs_Pos - lightPos) / 2.0);
+    vec4 lightVec = fs_Pos - lightPos;
+    float specularIntensity = max(pow(dot(normalize(fs_Nor), normalize(lightVec)), exp), 0.0);
+
+    col = clamp(vec3(col * (lightIntensity + specularIntensity)) + ambientTerm, 0.0, 1.0);
+
+    // TESTING DUMP
     ivec2 size = ivec2(20, 20);
     float total = floor(fs_Pos.x*float(size.x)) +
                   floor(fs_Pos.y*float(size.y));
