@@ -12,6 +12,13 @@ in float fs_BuildingHeight;
 out vec4 out_Col;
 
 /*
+ * Toolbox functions
+ */ 
+float triangleWave(float x, float freq, float amplitude) {
+  return abs(mod((x * freq), amplitude) - (0.5 * amplitude));
+}
+
+/*
  * Noise functions
  */
 
@@ -113,11 +120,11 @@ vec3 tallBuildingWindows(vec2 pos, float flag) {
     float x = pos.x - width * floor(pos.x / width);
     float y = pos.y - height * floor(pos.y / height);
 
-    // TODO: figure out how to get certain lights to flicker on and off...
-    float timeVar = sin(u_Time * x / 1000.0) / 2.0;
+    float timeVar = u_Time / 1000.0;
 
     if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5) {
-        return vec3(fs_Col);
+        float attenuation = 1.0 - triangleWave(timeVar, 2.8, 1.0);
+        return vec3(fs_Col) * attenuation;
     } else {
         return vec3(0.1, 0.20, 0.27);
     }
@@ -131,10 +138,10 @@ vec3 mediumBuildingWindows(vec2 pos) {
     float x = pos.x - width * floor(pos.x / width);
     float y = pos.y - height * floor(pos.y / height);
 
-    // TODO: figure out how to get certain lights to flicker on and off...
-    float timeVar = sin(u_Time * x / 1000.0) / 2.0;
+    float timeVar = sin(u_Time) / 2.0;
 
-    if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5) {
+    if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5 &&
+        timeVar < 0.5) {
         return vec3(242.0 / 255.0, 238.0 / 255.0, 128.0 / 255.0);
     } else {
         return vec3(fs_Col);
@@ -158,8 +165,8 @@ vec3 shortBuildingWindows(vec2 pos, float lightIntensity) {
     if (x > (width - winWidth) * 0.5 && x < (width + winWidth) * 0.5 &&
         y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5)
     {
-        //return vec3(0.36, 0.36, 0.37);
-        return vec3(1.0, 1.0, 1.0);
+        float attenuation = 1.0 - triangleWave(u_Time / 100.0, 1.8, 0.7);
+        return vec3(1.0, 1.0, 1.0) * attenuation;
     }
     else {
         return vec3(fs_Col);
@@ -209,7 +216,7 @@ void main()
 
     col = clamp(vec3(col * (lightIntensity + specularIntensity * 2.0)) + ambientTerm, 0.0, 1.0);
 
-    // TESTING DUMP
+    /* TESTING DUMP */
     ivec2 size = ivec2(20, 20);
     float total = floor(fs_Pos.x*float(size.x)) +
                   floor(fs_Pos.y*float(size.y));
@@ -225,6 +232,9 @@ void main()
     //     out_Col = vec4(0.0, 1.0, 0.0, 1.0);
     //     return;
     // }
-    
+    /* END TESTING DUMP */
+
+
+    //float transparency = 1.0 - triangleWave(u_Time * fs_Pos.y / 1000.0, 1.0, 0.2);
     out_Col = vec4(col, 1.0);
 }

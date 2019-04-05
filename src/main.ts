@@ -220,7 +220,7 @@ function main() {
   loadScene();
 
   // Set up camera and shaders
-  const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(10, 10, 10), vec3.fromValues(0, -2, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -299,14 +299,11 @@ function main() {
       setTransformArrays(highwayT, vec4.fromValues(0.0, 0.0, 0.0, 1.0));      
     }
 
-    // Render sky, city
-    renderer.render(camera, flatShader, [screenQuad]);
-    renderer.render(camera, terrain3DShader, [plane]);
-    renderer.render(camera, instancedShader, [
-      square,
-    ]);
-    renderer.render(camera, buildingShader, [cube]);
-
+    // Render 
+    renderer.render(camera, flatShader, [screenQuad]); // Sky
+    renderer.render(camera, terrain3DShader, [plane]); // Ground
+    renderer.render(camera, instancedShader, [square]); // Roads
+    renderer.render(camera, buildingShader, [cube]); // Buildings
 
     stats.end();
 
