@@ -21,13 +21,14 @@ class Building {
         // Sample noise function to jitter population (but population generally falls off from 
         // the center of the grid)
         let gridCenter: vec2 = vec2.fromValues(this.gridWidth / 2, this.gridHeight / 2);
-        let height: number = Math.max(5.0, 50.0 - vec2.distance(vec2.fromValues(this.x, this.y), gridCenter));
-        height += Math.max(0.0, (Math.random() - 0.5) * 15.0);
+        let height: number = Math.max(5.0, 25.0 - vec2.distance(vec2.fromValues(this.x, this.y), gridCenter));
+        height += Math.max(0.0, (Math.random() - 0.5) * 10.0);
 
         // Save the transforms state
         let T: mat4 = this.getTransformationMatrix(height, 
             vec2.fromValues(this.x, this.y), this.rotationAngle);
         this.transforms.push(T);
+        // console.log('T = ' + T);
         
         for (let i = 0; i < 3; i++) {
             // Walk down a random distance based on some height
@@ -39,10 +40,10 @@ class Building {
 
             // At lower height, create a new polygon with a different center (jitter x and z) (save transforms state)
             let rotationAngle: number = Math.random() * 2 * Math.PI;
-            let center: vec2 = vec2.fromValues(this.x + (Math.random() - 0.5) * 0.8, this.y + (Math.random() - 0.5) * 0.8);
+            let center: vec2 = vec2.fromValues(this.x + (Math.random() - 0.5) * 2.0, this.y + (Math.random() - 0.5) * 2.0);
             let newT: mat4 = this.getTransformationMatrix(height, center, rotationAngle);
-            //let newLength: number = this.transforms.push(newT);
-            console.log('height = ' + height);
+            let newLength: number = this.transforms.push(newT);
+            //console.log('newT: ' + newT);
         }
     }
 

@@ -77,7 +77,7 @@ class CityGrid {
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
                 // Create a simple checkered grid to represent roads
-                if (i % 10 == 0 || j % 10 == 0) {
+                if (i % 8 == 0 || j % 8 == 0) {
                     this.grid[i][j] = 1; // Road case
                 } else {
                     this.grid[i][j] = 0; // Not a road
@@ -100,7 +100,7 @@ class CityGrid {
                     // down a building
                     let gridCenter: vec2 = vec2.fromValues(this.width / 2, this.height / 2);
                     let distanceFromCenter: number = vec2.distance(vec2.fromValues(i, j), gridCenter);
-                    if (distanceFromCenter > this.width / 4) {
+                    if (distanceFromCenter > this.width / 2) {
                         // If far from city center, less likely to have buildings
                         if (noise > 0.97) {
                             this.grid[i][j] = 2;
@@ -249,11 +249,13 @@ class CityGrid {
                         col4Array.push(T[13]);
                         col4Array.push(T[14]);
                         col4Array.push(T[15]);
+
+                        colorsArray.push(0);
+                        colorsArray.push(0);
+                        colorsArray.push(1);
+                        colorsArray.push(1);
                     }
-                    colorsArray.push(0);
-                    colorsArray.push(0);
-                    colorsArray.push(1);
-                    colorsArray.push(1);
+                    
                 }
             }
         }
