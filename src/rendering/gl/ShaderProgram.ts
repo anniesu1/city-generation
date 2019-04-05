@@ -226,17 +226,12 @@ class ShaderProgram {
       gl.vertexAttribPointer(this.attrTransform4, 4, gl.FLOAT, false, 0, 0);
       gl.vertexAttribDivisor(this.attrTransform4, 1);
     }
-    
-
 
     if (this.attrUV != -1 && d.bindUV()) {
       gl.enableVertexAttribArray(this.attrUV);
       gl.vertexAttribPointer(this.attrUV, 2, gl.FLOAT, false, 0, 0);
       gl.vertexAttribDivisor(this.attrUV, 0); // Advance 1 index in pos VBO for each vertex
     }
-
-    // TODO: Set up attribute data for additional instanced rendering data as needed
-    // Position, orientation, scaling
 
     d.bindIdx();
     // drawElementsInstanced uses the vertexAttribDivisor for each "in" variable to

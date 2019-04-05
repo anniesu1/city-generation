@@ -1,4 +1,5 @@
 import { vec2, mat4 } from "gl-matrix";
+import Building from "./Building";
 
 function random2(p: vec2) : vec2 {
     // return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
@@ -75,16 +76,12 @@ class CityGrid {
 
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
+                // Create a simple checkered grid to represent roads
                 if (i % 10 == 0 || j % 10 == 0) {
                     this.grid[i][j] = 1; // Road case
                 } else {
                     this.grid[i][j] = 0; // Not a road
                 }
-                // if (noise > 0.6) {
-                //     this.grid[i][j] = 1; // Set 1 (valid building spot)
-                // } else {
-                //     this.grid[i][j] = 0; // Set 0 (invalid building spot) 
-                // }
             }
         }
 
@@ -98,10 +95,19 @@ class CityGrid {
             for (let j = 0; j < this.height; j++) {
                 // Check if point belongs in grid using noise function
                 let noise = Math.random();
-                if (noise > 0.8 && this.grid[i][j] != 1 && this.neighborsAreNotRoads(i, j)) {
+                if (noise > 0.9 && this.grid[i][j] != 1 && this.neighborsAreNotRoads(i, j)) {
                     // If noise is above a threshold and there is not already a road, set
                     // down a building
-                    this.grid[i][j] = 2;
+                    let gridCenter: vec2 = vec2.fromValues(this.width / 2, this.height / 2);
+                    let distanceFromCenter: number = vec2.distance(vec2.fromValues(i, j), gridCenter);
+                    if (distanceFromCenter > this.width / 4) {
+                        // If far from city center, less likely to have buildings
+                        if (noise > 0.97) {
+                            this.grid[i][j] = 2;
+                        }
+                    } else {
+                        this.grid[i][j] = 2;
+                    }
                 }
             }
         }
@@ -139,7 +145,7 @@ class CityGrid {
                     let rotation90: mat4 = mat4.create();
                     let translatedMat: mat4 = mat4.create();
                     translatedMat[12] = i - this.width / 2;
-                    translatedMat[14] = j - this.width / 2;
+                    translatedMat[14] = j - this.height / 2;
                     mat4.rotateX(rotation90, translatedMat, 90.0 * Math.PI / 180.0);
 
                     col1Array.push(rotation90[0]);
@@ -217,27 +223,33 @@ class CityGrid {
             for (let j: number = 0; j < this.height; j++) {
                 let cellType = this.grid[i][j];
                 if (cellType == 2) {
-                    // If the cell type is a building, create a square
-                    col1Array.push(1);
-                    col1Array.push(0);
-                    col1Array.push(0);
-                    col1Array.push(0);
+                    // If the cell type is building, create a building polygon
+                    let building = new Building(i, j, this.width, this.height);
+                    building.create();
+                    let transforms: mat4[] = building.getTransforms();
 
-                    col2Array.push(0);
-                    col2Array.push(15);
-                    col2Array.push(0);
-                    col2Array.push(0);
+                    for (let k = 0; k < transforms.length; k++) {
+                        let T: mat4 = transforms[k];
+                        col1Array.push(T[0]);
+                        col1Array.push(T[1]);
+                        col1Array.push(T[2]);
+                        col1Array.push(T[3]);
 
-                    col3Array.push(0);
-                    col3Array.push(0);
-                    col3Array.push(1);
-                    col3Array.push(0);
-            
-                    col4Array.push(i - this.width / 2);
-                    col4Array.push(0);
-                    col4Array.push(j - this.height / 2);
-                    col4Array.push(1);
+                        col2Array.push(T[4]);
+                        col2Array.push(T[5]);
+                        col2Array.push(T[6]);
+                        col2Array.push(T[7]);
 
+                        col3Array.push(T[8]);
+                        col3Array.push(T[9]);
+                        col3Array.push(T[10]);
+                        col3Array.push(T[11]);
+                
+                        col4Array.push(T[12]);
+                        col4Array.push(T[13]);
+                        col4Array.push(T[14]);
+                        col4Array.push(T[15]);
+                    }
                     colorsArray.push(0);
                     colorsArray.push(0);
                     colorsArray.push(1);

@@ -10,7 +10,7 @@ import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 import LSystem from './lsystem/LSystem';
 import Plane from './geometry/Plane';
-import CityGrid from './CityGrid';
+import CityGrid from './city/CityGrid';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -319,11 +319,9 @@ function main() {
 
     // renderer.render(camera, flat, [screenQuad]);
 
-    renderer.render(camera, terrain3DShader, [plane]);
 
-    // renderer.render(camera, flat, [
-    //   square,
-    // ]);
+
+    //renderer.render(camera, terrain3DShader, [plane]);
 
     renderer.render(camera, instancedShader, [
       square,

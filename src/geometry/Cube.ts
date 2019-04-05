@@ -20,90 +20,57 @@ class Cube extends Drawable {
   }
 
   create() {
-  this.indices = new Uint32Array([0, 1, 2, 
-                                  0, 2, 3,
-                                  4, 5, 6, 
-                                  4, 6, 7,
-                                  8, 9, 10, 
-                                  8, 10, 11,
-                                  12, 13, 14, 
-                                  12, 14, 15,
-                                  16, 17, 18, 
-                                  16, 18, 19,
-                                  20, 21, 22, 
-                                  20, 22, 23]);
-  this.normals = new Float32Array([
-                                   // Front side quad
-                                   0, 0, 1, 0,
-                                   0, 0, 1, 0,
-                                   0, 0, 1, 0,
-                                   0, 0, 1, 0,
+    let vertices = [
+      [-0.5, 0, -0.5],
+      [0.5, 0, -0.5],
+      [0.5, 1, -0.5],
+      [-0.5, 1, -0.5],
+      [-0.5, 0, 0.5],
+      [0.5, 0, 0.5],
+      [0.5, 1, 0.5],
+      [-0.5, 1, 0.5],
+    ];
+    let vertIndices = [
+      0, 1, 3, 3, 1, 2, // Front quad
+      1, 5, 2, 2, 5, 6, // Right quad
+      5, 4, 6, 6, 4, 7, // Back quad
+      4, 0, 7, 7, 0, 3, // Left quad
+      3, 2, 7, 7, 2, 6, // Top quad
+      4, 5, 0, 0, 5, 1, // Bottom quad
+    ];
+    let vertNormals = [
+      [0, 0, 1], 
+      [1, 0, 0], 
+      [0, 0, -1], 
+      [-1, 0, 0], 
+      [0, 1, 0], 
+      [0, -1, 0],
+    ];
 
-                                   // Back side quad 
-                                   0, 0, -1, 0,
-                                   0, 0, -1, 0,
-                                   0, 0, -1, 0,
-                                   0, 0, -1, 0,
+    this.indices = new Uint32Array(36);
 
-                                   // Left side quad
-                                   -1, 0, 0, 0,
-                                   -1, 0, 0, 0,
-                                   -1, 0, 0, 0,
-                                   -1, 0, 0, 0,
+    for (let i = 0; i < 36; i++) {
+      this.indices[i] = i;
+    }
 
-                                   // Right side quad 
-                                   1, 0, 0, 0,
-                                   1, 0, 0, 0,
-                                   1, 0, 0, 0,
-                                   1, 0, 0, 0,
+    this.positions = new Float32Array(4 * 36);
 
-                                   // Top quad 
-                                   0, 1, 0, 0,
-                                   0, 1, 0, 0,
-                                   0, 1, 0, 0,
-                                   0, 1, 0, 0,
+    for (let i = 0; i < 36; i++) {
+      this.positions[i * 4 + 0] = vertices[vertIndices[i]][0] + this.center[0];
+      this.positions[i * 4 + 1] = vertices[vertIndices[i]][1] + this.center[1];
+      this.positions[i * 4 + 2] = vertices[vertIndices[i]][2] + this.center[2];
+      this.positions[i * 4 + 3] = 1;
+    }
 
-                                   // Bottom quad 
-                                   0, -1, 0, 0,
-                                   0, -1, 0, 0,
-                                   0, -1, 0, 0,
-                                   0, -1, 0, 0
-                                  ]);
-  this.positions = new Float32Array([-0.5, -0.5, 0.5, 0.5,
-                                     0.5, -0.5, 0.5, 0.5,
-                                     0.5, 0.5, 0.5, 0.5,
-                                     -0.5, 0.5, 0.5, 0.5,
-                                    
-                                    // Back side quad
-                                    -0.5, -0.5, -0.5, 0.5,
-                                    0.5, -0.5, -0.5, 0.5,
-                                    0.5, 0.5, -0.5, 0.5,
-                                    -0.5, 0.5, -0.5, 0.5,
+    this.normals = new Float32Array(4 * 36);
 
-                                    // Left side quad 
-                                    -0.5, -0.5, -0.5, 0.5,
-                                    -0.5, -0.5, 0.5, 0.5,
-                                    -0.5, 0.5, 0.5, 0.5,
-                                    -0.5, 0.5, -0.5, 0.5,
-
-                                    // Right side quad 
-                                    0.5, -0.5, 0.5, 0.5,
-                                    0.5, -0.5, -0.5, 0.5,
-                                    0.5, 0.5, -0.5, 0.5,
-                                    0.5, 0.5, 0.5, 0.5,
-
-                                    // Top quad 
-                                    -0.5, 0.5, 0.5, 0.5,
-                                    0.5, 0.5, 0.5, 0.5,
-                                    0.5, 0.5, -0.5, 0.5,
-                                    -0.5, 0.5, -0.5, 0.5,
-
-                                    // Bottom quad
-                                    -0.5, -0.5, 0.5, 0.5,
-                                    0.5, -0.5, 0.5, 0.5,
-                                    0.5, -0.5, -0.5, 0.5,
-                                    -0.5, -0.5, -0.5, 0.5
-                                ]);
+    for (let i = 0; i < 36; i++) {
+      let faceNumber = Math.floor(i / 6);
+      this.normals[i * 4 + 0] = vertNormals[faceNumber][0];
+      this.normals[i * 4 + 1] = vertNormals[faceNumber][1];
+      this.normals[i * 4 + 2] = vertNormals[faceNumber][2];
+      this.normals[i * 4 + 3] = 0;
+    }
 
     this.generateIdx();
     this.generatePos();
