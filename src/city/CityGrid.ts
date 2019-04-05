@@ -221,9 +221,9 @@ class CityGrid {
                         col4Array.push(T[15]);
 
                         let color: vec3;
-                        if (height > 9.0) {
+                        if (height > 8.0) {
                             color = this.tallBuildingColor;
-                        } else if (height > 3.0) {
+                        } else if (height > 2.5) {
                             color = this.mediumBuildingColor;
                         } else {
                             color = this.shortBuildingColor;

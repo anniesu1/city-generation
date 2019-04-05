@@ -102,7 +102,7 @@ float pNoise(vec2 p, int res) {
     return nf*nf*nf*nf;
 }
 
-vec3 tallBuildingWindows(vec2 uv, float flag) {
+vec3 tallBuildingWindows(vec2 pos, float flag) {
     if (flag > 0.5) {
         return vec3(fs_Col);
     }
@@ -110,8 +110,8 @@ vec3 tallBuildingWindows(vec2 uv, float flag) {
     float height = 1.0;
     float winWidth = 0.38;
     float winHeight = 0.76;
-    float x = uv.x - width * floor(uv.x / width);
-    float y = uv.y - height * floor(uv.y / height);
+    float x = pos.x - width * floor(pos.x / width);
+    float y = pos.y - height * floor(pos.y / height);
 
     // TODO: figure out how to get certain lights to flicker on and off...
     float timeVar = sin(u_Time * x / 1000.0) / 2.0;
@@ -120,6 +120,24 @@ vec3 tallBuildingWindows(vec2 uv, float flag) {
         return vec3(fs_Col);
     } else {
         return vec3(0.1, 0.20, 0.27);
+    }
+}
+
+vec3 mediumBuildingWindows(vec2 pos) {
+    float width = 2.0;
+    float height = 5.0;
+    float winWidth = 0.38;
+    float winHeight = 0.46;
+    float x = pos.x - width * floor(pos.x / width);
+    float y = pos.y - height * floor(pos.y / height);
+
+    // TODO: figure out how to get certain lights to flicker on and off...
+    float timeVar = sin(u_Time * x / 1000.0) / 2.0;
+
+    if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5) {
+        return vec3(242.0 / 255.0, 238.0 / 255.0, 128.0 / 255.0);
+    } else {
+        return vec3(fs_Col);
     }
 }
 
@@ -153,16 +171,20 @@ vec3 shortBuildingWindows(vec2 pos, float lightIntensity) {
 */
 void main()
 {
-    // Apply lambertian lighting
-    int numLights = 1;
-    vec4 lightPos = vec4(4.0, 8.0, -15.0, 1.0);
+    // Apply lambertian contribution from light 1
+    vec4 lightPos1 = vec4(4.0, 8.0, -15.0, 1.0);
     float diffuseTerm = 0.0;
 
-    for (int i = 0; i < numLights; i++) {
-        vec4 lightVec = fs_Pos - lightPos;
-        diffuseTerm = dot(normalize(fs_Nor), normalize(lightVec));
-        diffuseTerm = clamp(diffuseTerm, 0.0, 1.0);
-    }
+    vec4 lightVec1 = fs_Pos - lightPos1;
+    diffuseTerm = dot(normalize(fs_Nor), normalize(lightVec1));
+    diffuseTerm = clamp(diffuseTerm, 0.0, 1.0);
+
+    // Apply lambertian contribution from light 1
+    vec4 lightPos2 = vec4(-14.0, 15.0, 10.0, 1.0);
+    vec4 lightVec2 = fs_Pos - lightPos2;
+    diffuseTerm += dot(normalize(fs_Nor), normalize(lightVec2));
+    diffuseTerm = clamp(diffuseTerm, 0.0, 1.0);
+
     //float ambientTerm = 0.4;
     vec3 ambientTerm = vec3(0.16, 0.20, 0.28) * min(max(fs_Nor.y, 0.0) + 0.2, 1.0);
     float lightIntensity = diffuseTerm + 0.2;
@@ -173,19 +195,19 @@ void main()
     if (fs_BuildingHeight > 9.0) {
         col = tallBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), timeVar);
     } else if (fs_BuildingHeight > 6.0) {
-        col = tallBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), timeVar);
+        col = mediumBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0));
     } else {
         col = shortBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), lightIntensity);
     }
 
     // Specular
-    float exp = 2000.0;
+    float exp = 200.0;
     vec4 cameraPos = vec4(u_Eye, 1.0);
-    vec4 H = normalize((cameraPos + fs_Pos - lightPos) / 2.0);
-    vec4 lightVec = fs_Pos - lightPos;
-    float specularIntensity = max(pow(dot(normalize(fs_Nor), normalize(lightVec)), exp), 0.0);
+    vec4 H = normalize((cameraPos + fs_Pos - lightPos2) / 2.0);
+    vec4 lightVec = fs_Pos - lightPos2;
+    float specularIntensity = max(pow(dot(normalize(fs_Nor), normalize(lightVec)), exp), 0.1);
 
-    col = clamp(vec3(col * (lightIntensity + specularIntensity)) + ambientTerm, 0.0, 1.0);
+    col = clamp(vec3(col * (lightIntensity + specularIntensity * 2.0)) + ambientTerm, 0.0, 1.0);
 
     // TESTING DUMP
     ivec2 size = ivec2(20, 20);

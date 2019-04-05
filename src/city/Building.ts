@@ -44,7 +44,7 @@ class Building {
             // Walk down a random distance based on some height
             height -= Math.random() * 3.5;
 
-            if (height < 0.8) {
+            if (height < 1.2) {
                 break;
             }
 
@@ -55,17 +55,19 @@ class Building {
 
             // Modify the scaling based on height
             let xScale: number = 1.0;
+            let yScale: number = 1.0;
             let zScale: number = 1.0;
             if (initialHeight > 9.0) {
                 xScale = 1.2;
             } else if (initialHeight > 3.0) {
                 xScale = 1.1;
             } else {
-                xScale = 2.5 * ((Math.random() + 1) / 2.0);
+                xScale = 2.0 * ((Math.random() + 1) / 2.0);
+                yScale = 0.65;
                 zScale = 2.0 * ((Math.random() + 1) / 2.0);
             }
             newT[0] *= xScale;
-            //newT[5] = yScale;
+            newT[5] *= yScale;
             newT[10] *= zScale;
 
             let newLength: number = this.transforms.push(newT);
