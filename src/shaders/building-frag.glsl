@@ -113,16 +113,9 @@ void main()
         diffuseTerm = dot(normalize(fs_Nor), normalize(lightVec));
         diffuseTerm = clamp(diffuseTerm, 0.0, 1.0);
     }
-    
-
-    // Dampen the light intensity
     //float ambientTerm = 0.4;
     vec3 ambientTerm = vec3(0.16, 0.20, 0.28) * min(max(fs_Nor.y, 0.0) + 0.2, 1.0);
-
     float lightIntensity = diffuseTerm + 0.2;
-
-    float dist = 1.0 - (length(fs_Pos.xyz) * 2.0);
-
     vec3 col = clamp(vec3(fs_Col.rgb * lightIntensity) + ambientTerm, 0.0, 1.0);
     out_Col = vec4(col, 1.0);
 }

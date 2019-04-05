@@ -21,7 +21,7 @@ const vec3 mountain[5] = vec3[](vec3(54, 94, 122) / 255.0,
                                 vec3(216, 213, 208) / 255.0,
                                 vec3(239, 240, 241) / 255.0);
 
-const vec3 duskyMountain[5] = vec3[](vec3(223, 196, 182) / 255.0,
+const vec3 city[5] = vec3[](vec3(223, 206, 202) / 255.0,
                                 vec3(233, 122, 144) / 255.0,
                                 vec3(128, 71, 102) / 255.0,
                                 vec3(54, 94, 122) / 255.0,
@@ -45,27 +45,27 @@ vec3 getMountainColor() {
     return mountain[0];
 }
 
-vec3 getIslandColor() {
-    if (fs_Height < 4.0) {
+vec3 getCityColor() {
+    if (fs_Height < -1.0) {
         return mountain[0];
     }
-    else if (fs_Height < 8.0) {
-        return mix(duskyMountain[0], duskyMountain[1], (fs_Height - 4.0) / 4.0);
+    else if (fs_Height < 4.0) {
+        return mix(city[0], city[1], (fs_Height - 4.0) / 4.0);
     }
-    else if (fs_Height < 11.0) {
-        return mix(duskyMountain[1], duskyMountain[2], (fs_Height - 8.0) / 3.0);
+    else if (fs_Height < 7.0) {
+        return mix(city[1], city[2], (fs_Height - 8.0) / 3.0);
     }
     else if (fs_Height < 14.0) {
-        return mix(duskyMountain[2], duskyMountain[3], (fs_Height - 11.0) / 3.0);
+        return mix(city[2], city[3], (fs_Height - 11.0) / 3.0);
     }
-    return mix(duskyMountain[3], duskyMountain[4], (fs_Height - 14.0) / 3.0);
+    return mix(city[3], city[4], (fs_Height - 14.0) / 3.0);
 }
 
 void main() {
     //float t = clamp(smoothstep(40.0, 50.0, length(fs_Pos)), 0.0, 1.0); // Distance fog
 
     vec3 customColor;
-    customColor = getIslandColor();
+    customColor = getCityColor();
 
     // Mix in order to create fog effect
     //out_Col = vec4(mix(customColor, vec3(164.0 / 255.0, 233.0 / 255.0, 1.0), t), 1.0);

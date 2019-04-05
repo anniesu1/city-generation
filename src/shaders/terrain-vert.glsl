@@ -120,7 +120,7 @@ void main() {
 
   float height;
     // Cloudy mountains
-    height = pow(pert * 6.0, 1.7);
+    height = pow(pert * 6.0, 1.7) - 10.0;
 
     // More realistic mountains / dusky mountains
     //height = pow(perlin * 4.0, 1.3) * 6.0;
@@ -130,7 +130,7 @@ void main() {
     //height = pow(fbmNoise, 7.70) * 6.0;
 
 
-    height = clamp(height, 0.0, 10.0);
+    height = clamp(height, -20.0, -0.99);
   
   fs_Height = height;
   modelposition[1] = height;

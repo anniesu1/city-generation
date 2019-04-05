@@ -297,7 +297,7 @@ function main() {
       setTransformArrays(highwayT, vec4.fromValues(0.0, 0.0, 0.0, 1.0));      
     }
 
-    //renderer.render(camera, terrain3DShader, [plane]);
+    renderer.render(camera, terrain3DShader, [plane]);
 
     renderer.render(camera, instancedShader, [
       square,
