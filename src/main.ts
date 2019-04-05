@@ -236,9 +236,9 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
   ]);
 
-  const mapShader = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/map-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/map-frag.glsl')),
+  const buildingShader = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/building-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/building-frag.glsl')),
   ]);
 
   const terrain3DShader = new ShaderProgram([
@@ -279,7 +279,6 @@ function main() {
     stats.begin();
     instancedShader.setTime(time);
     flat.setTime(time++);
-    mapShader.setTime(time++);
     terrain3DShader.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
@@ -298,35 +297,13 @@ function main() {
       setTransformArrays(highwayT, vec4.fromValues(0.0, 0.0, 0.0, 1.0));      
     }
 
-    // Pass user input to shaders
-    // if (controls["Show pop. density"]) {
-    //   mapShader.setShowPopulation(1.0);
-    // } else {
-    //   mapShader.setShowPopulation(0.0);
-    // }
-
-    // if (controls["Show terrain elevation"]) {
-    //   mapShader.setShowTerrainGradient(1.0);
-    // } else {
-    //   mapShader.setShowTerrainGradient(0.0);
-    // }
-
-    // if (controls["Show land vs. water"]) {
-    //   mapShader.setShowTerrainBinary(1.0);
-    // } else {
-    //   mapShader.setShowTerrainBinary(0.0);
-    // }
-
-    // renderer.render(camera, flat, [screenQuad]);
-
-
-
     //renderer.render(camera, terrain3DShader, [plane]);
 
     renderer.render(camera, instancedShader, [
       square,
-      cube,
     ]);
+
+    renderer.render(camera, buildingShader, [cube]);
 
     stats.end();
 

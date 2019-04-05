@@ -95,7 +95,7 @@ class CityGrid {
             for (let j = 0; j < this.height; j++) {
                 // Check if point belongs in grid using noise function
                 let noise = Math.random();
-                if (noise > 0.9 && this.grid[i][j] != 1 && this.neighborsAreNotRoads(i, j)) {
+                if (noise > 0.8 && this.grid[i][j] != 1 && this.neighborsAreNotRoads(i, j)) {
                     // If noise is above a threshold and there is not already a road, set
                     // down a building
                     let gridCenter: vec2 = vec2.fromValues(this.width / 2, this.height / 2);
