@@ -231,7 +231,7 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/instanced-frag.glsl')),
   ]);
 
-  const flat = new ShaderProgram([
+  const flatShader = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/flat-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
   ]);
@@ -273,12 +273,12 @@ function main() {
   setUpGrid();
 
 
-  // This function will be called every frame
+  // *** TICK FUNCTION *** This function will be called every frame
   function tick() {
     camera.update();
     stats.begin();
     instancedShader.setTime(time);
-    flat.setTime(time++);
+    flatShader.setTime(time++);
     terrain3DShader.setTime(time++);
     buildingShader.setTime(time++);
     buildingShader.setEyeRefUp(camera.position, camera.target, camera.up);
@@ -299,7 +299,8 @@ function main() {
       setTransformArrays(highwayT, vec4.fromValues(0.0, 0.0, 0.0, 1.0));      
     }
 
-    // Render city
+    // Render sky, city
+    renderer.render(camera, flatShader, [screenQuad]);
     renderer.render(camera, terrain3DShader, [plane]);
     renderer.render(camera, instancedShader, [
       square,
@@ -317,13 +318,13 @@ function main() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.setAspectRatio(window.innerWidth / window.innerHeight);
     camera.updateProjectionMatrix();
-    flat.setDimensions(window.innerWidth, window.innerHeight);
+    flatShader.setDimensions(window.innerWidth, window.innerHeight);
   }, false);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
   camera.updateProjectionMatrix();
-  flat.setDimensions(window.innerWidth, window.innerHeight);
+  flatShader.setDimensions(window.innerWidth, window.innerHeight);
 
   
   // Start the render loop

@@ -131,9 +131,9 @@ vec3 shortBuildingWindows(vec2 pos, float lightIntensity) {
     vec3 palette = a + b * cos(2.0 * 3.141592653589 * (c * lightIntensity + d));
 
     float width = 15.85;
-    float height = 15.2;
-    float winWidth = 3.55;
-    float winHeight = 1.70;
+    float height = 15.0;
+    float winWidth = 5.55;
+    float winHeight = 2.70;
     float x = pos.x - width * floor(pos.x / width);
     float y = pos.y - height * floor(pos.y / height);
 
