@@ -20,6 +20,7 @@ in vec4 vs_Transform4;
 out vec4 fs_Col;
 out vec4 fs_Pos;
 out vec4 fs_Nor;
+out float fs_BuildingHeight;
 
 // We are assuming dimensions for map are 100x100
 vec4 screenToQuad(vec4 pos) 
@@ -33,6 +34,7 @@ void main()
     fs_Col = vs_Col;
     fs_Pos = vs_Pos;
     fs_Nor = vs_Nor;
+    fs_BuildingHeight = vs_Transform2[1];
 
     mat4 t = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);
     vec4 newPos = t * vs_Pos;

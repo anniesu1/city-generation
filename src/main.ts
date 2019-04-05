@@ -251,8 +251,8 @@ function main() {
 
   // *** Render pass to fill our texture ***
   const textureShader = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/map-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/map-frag.glsl')),
+    new Shader(gl.VERTEX_SHADER, require('./shaders/terrain-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/terrain-frag.glsl')),
   ]);
 
   const texturecanvas = canvas;
@@ -267,7 +267,7 @@ function main() {
 
   textureRenderer.setSize(width, height);
   textureRenderer.setClearColor(0, 0, 0, 1);
-  let textureData: Uint8Array = textureRenderer.renderTexture(camera, textureShader, [screenQuad]);
+  let textureData: Uint8Array = textureRenderer.renderTexture(camera, textureShader, [plane]);
 
   // Set up city generation
   setUpGrid();
@@ -280,6 +280,7 @@ function main() {
     instancedShader.setTime(time);
     flat.setTime(time++);
     terrain3DShader.setTime(time++);
+    buildingShader.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
 
@@ -297,13 +298,13 @@ function main() {
       setTransformArrays(highwayT, vec4.fromValues(0.0, 0.0, 0.0, 1.0));      
     }
 
+    // Render city
     renderer.render(camera, terrain3DShader, [plane]);
-
     renderer.render(camera, instancedShader, [
       square,
     ]);
-
     renderer.render(camera, buildingShader, [cube]);
+
 
     stats.end();
 

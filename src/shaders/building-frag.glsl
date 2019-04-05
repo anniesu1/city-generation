@@ -1,9 +1,12 @@
 #version 300 es
 precision highp float;
 
+uniform float u_Time;
+
 in vec4 fs_Col;
 in vec4 fs_Pos;
 in vec4 fs_Nor;
+in float fs_BuildingHeight;
 
 out vec4 out_Col;
 
@@ -98,6 +101,60 @@ float pNoise(vec2 p, int res) {
     return nf*nf*nf*nf;
 }
 
+vec3 tallBuildingWindows(vec2 uv, float flag) {
+    if (flag > 0.5) {
+        return vec3(fs_Col);
+    }
+    float width = 0.5;
+    float height = 1.0;
+    float winWidth = 0.38;
+    float winHeight = 0.76;
+    float x = uv.x - width * floor(uv.x / width);
+    float y = uv.y - height * floor(uv.y / height);
+
+    // TODO: figure out how to get certain lights to flicker on and off...
+    float timeVar = sin(u_Time * x / 1000.0) / 2.0;
+
+    if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5) {
+        return vec3(fs_Col);
+    } else {
+        return vec3(0.1, 0.20, 0.27);
+    }
+}
+
+vec3 shortBuildingWindows(vec2 pos) {
+    float width = 15.85;
+    float height = 15.2;
+    float winWidth = 3.55;
+    float winHeight = 1.70;
+    float x = pos.x - width * floor(pos.x / width);
+    float y = pos.y - height * floor(pos.y / height);
+
+    if (x > (width - winWidth) * 0.5 && x < (width + winWidth) * 0.5 &&
+        y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5)
+    {
+        //return vec3(0.36, 0.36, 0.37);
+        return vec3(1.0, 1.0, 1.0);
+    }
+    else {
+        return vec3(0.88, 0.77, 0.66);
+    }
+
+    // float width = 0.5;
+    // float height = fs_BuildingHeight;
+    // float winWidth = 0.80;
+    // float winHeight = 0.90;
+    // float x = pos.x - width * floor(pos.x / width);
+    // float y = pos.y - height * floor(pos.y / height);
+
+    // if (y > (height - winHeight) * 0.5 && y < (height + winHeight) * 0.5) {
+    //     return vec3(fs_Col);
+    // } else {
+    //     return vec3(fs_Col);
+    //     //return vec3(0.38, 0.40, 0.47);
+    // }
+}
+
 /*
 * Main
 */
@@ -116,6 +173,36 @@ void main()
     //float ambientTerm = 0.4;
     vec3 ambientTerm = vec3(0.16, 0.20, 0.28) * min(max(fs_Nor.y, 0.0) + 0.2, 1.0);
     float lightIntensity = diffuseTerm + 0.2;
-    vec3 col = clamp(vec3(fs_Col.rgb * lightIntensity) + ambientTerm, 0.0, 1.0);
+
+    float timeVar = sin(u_Time) / 2.0;
+
+    vec3 col;
+    if (fs_BuildingHeight > 9.0) {
+        col = tallBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), timeVar);
+    } else if (fs_BuildingHeight > 6.0) {
+        col = tallBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0), timeVar);
+    } else {
+        col = shortBuildingWindows(vec2(fs_Pos.x * 100.0, fs_Pos.y * 100.0));
+    }
+    col = clamp(vec3(col * lightIntensity) + ambientTerm, 0.0, 1.0);
+
+    // Compute windows
+    //ivec2 size = ivec2(floor(fs_Pos.x * 10.0), floor(fs_Pos.y * 10.0));
+    ivec2 size = ivec2(20, 20);
+    float total = floor(fs_Pos.x*float(size.x)) +
+                  floor(fs_Pos.y*float(size.y));
+    bool isEven = mod(total,2.0)==0.0;
+    vec4 col1 = vec4(0.0,0.0,0.0,1.0);
+    vec4 col2 = vec4(1.0,1.0,1.0,1.0);
+    // if (isEven) {
+    //     out_Col = vec4(249.0 / 255.0, 250.0 / 255.0, 252.0 / 255.0, 1.0);
+    //     return;
+    // }
+
+    // if (fs_BuildingHeight > 10.0) {
+    //     out_Col = vec4(0.0, 1.0, 0.0, 1.0);
+    //     return;
+    // }
+    
     out_Col = vec4(col, 1.0);
 }

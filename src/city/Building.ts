@@ -17,12 +17,13 @@ class Building {
         this.transforms = [];
     }
 
-    create() {
+    create() : number {
         // Sample noise function to jitter population (but population generally falls off from 
         // the center of the grid)
         let gridCenter: vec2 = vec2.fromValues(this.gridWidth / 2, this.gridHeight / 2);
         let height: number = Math.max(5.0, 25.0 - vec2.distance(vec2.fromValues(this.x, this.y), gridCenter));
         height += Math.max(0.0, (Math.random() - 0.5) * 10.0);
+        let initialHeight: number = height;
 
         // Save the transforms state
         let T: mat4 = this.getTransformationMatrix(height, 
@@ -45,6 +46,7 @@ class Building {
             let newLength: number = this.transforms.push(newT);
             //console.log('newT: ' + newT);
         }
+        return height;
     }
 
     getTransformationMatrix(height: number, center: vec2, rotationAngle: number) : mat4 {

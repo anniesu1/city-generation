@@ -1,5 +1,6 @@
-import { vec2, mat4 } from "gl-matrix";
+import { vec2, mat4, vec3 } from "gl-matrix";
 import Building from "./Building";
+import TextureHelper from '../lsystem/TextureHelper';
 
 function random2(p: vec2) : vec2 {
     // return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
@@ -54,6 +55,9 @@ class CityGrid {
     width: number;
     height: number;
     grid: number[][] = [];
+    tallBuildingColor: vec3 = vec3.fromValues(69.0 / 255.0, 88.0 / 255.0, 121.0 / 255.0);
+    mediumBuildingColor: vec3 = vec3.fromValues(153.0 / 255.0, 143.0 / 255.0, 139.0 / 255.0);
+    shortBuildingColor: vec3 = vec3.fromValues(223.0 / 255.0, 196.0 / 255.0, 182.0 / 255.0);
 
     constructor(width: number, height: number) {
         this.width = width;
@@ -100,6 +104,18 @@ class CityGrid {
                     // down a building
                     let gridCenter: vec2 = vec2.fromValues(this.width / 2, this.height / 2);
                     let distanceFromCenter: number = vec2.distance(vec2.fromValues(i, j), gridCenter);
+                    if (i > 75 && j > 65 && j <= 80) {
+                        continue;
+                    } 
+                    if (i > 85 && j > 80) {
+                        continue;
+                    } 
+                    if (i > 85 && j > 40 && j <= 62) {
+                        continue;
+                    }
+                    if (i > 68 && i < 87 && j > 8 && j <= 30) {
+                        continue;
+                    }
                     if (distanceFromCenter > this.width / 2) {
                         // If far from city center, less likely to have buildings
                         if (noise > 0.97) {
@@ -111,6 +127,7 @@ class CityGrid {
                 }
             }
         }
+
         return outputPoints;
     }
 
@@ -170,26 +187,27 @@ class CityGrid {
 
                     if (cellType == 1) {
                         // Road - red
-                        colorsArray.push(1);
-                        colorsArray.push(0);
-                        colorsArray.push(0);
+                        //0.36, 0.36, 0.37
+                        colorsArray.push(0.56);
+                        colorsArray.push(0.56);
+                        colorsArray.push(0.57);
                         colorsArray.push(1);
                     }
 
                     if (cellType == 2) {
-                        // Building - blue
+                        // Building - nothing (for final output)
                         colorsArray.push(0);
                         colorsArray.push(0);
-                        colorsArray.push(1);
-                        colorsArray.push(1);
+                        colorsArray.push(0);
+                        colorsArray.push(0);
                     }
 
                     if (cellType == 3) {
-                        // Water - green
-                        colorsArray.push(1);
-                        colorsArray.push(0);
-                        colorsArray.push(0);
-                        colorsArray.push(1);
+                        // Water - clear
+                        colorsArray.push(103.0 / 255.0);
+                        colorsArray.push(196.0 / 255.0);
+                        colorsArray.push(214.0 / 255.0);
+                        colorsArray.push(0.4);
                     }
                 }
             }
@@ -225,7 +243,7 @@ class CityGrid {
                 if (cellType == 2) {
                     // If the cell type is building, create a building polygon
                     let building = new Building(i, j, this.width, this.height);
-                    building.create();
+                    let height = building.create();
                     let transforms: mat4[] = building.getTransforms();
 
                     for (let k = 0; k < transforms.length; k++) {
@@ -250,9 +268,17 @@ class CityGrid {
                         col4Array.push(T[14]);
                         col4Array.push(T[15]);
 
-                        colorsArray.push(0);
-                        colorsArray.push(0);
-                        colorsArray.push(1);
+                        let color: vec3;
+                        if (height > 9.0) {
+                            color = this.tallBuildingColor;
+                        } else if (height > 3.0) {
+                            color = this.mediumBuildingColor;
+                        } else {
+                            color = this.shortBuildingColor;
+                        }
+                        colorsArray.push(color[0]);
+                        colorsArray.push(color[1]);
+                        colorsArray.push(color[2]);
                         colorsArray.push(1);
                     }
                     
